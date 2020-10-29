@@ -1,0 +1,12 @@
+.video--item {
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    cursor: pointer;
+}
+
+.video--item .video--image {
+    display: block;
+    max-width: 150px;
+    object-fit: cover;
+}

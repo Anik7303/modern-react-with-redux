@@ -1,63 +1,56 @@
-import React from "react";
-import SearchBar from "./SearchBar";
-import youtubeApi from "../api/youtube";
-import VideoList from "./VideoList";
-import VideoDetail from "./VideoDetail";
-import { VideoSelectContext } from "../hoc/context";
+import React, { useState } from "react";
+import Accordion from "./Accordion";
+import Search from "./Search";
+import Dropdown from "./Dropdown";
+import Translate from "./Translate";
+import Route from "./Route";
+import Header from "./Header";
 
-class App extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { videos: [], selectedVideo: null };
-        this.onSearchSubmit = this.onSearchSubmit.bind(this);
-        this.formatVideoObj = this.formatVideoObj.bind(this);
-        this.onVideoSelect = this.onVideoSelect.bind(this);
-    }
+const items = [
+    { title: "What is React?", content: "React is a FrontEnd Javascript framework." },
+    { title: " Why use React?", content: "React is a favorite JS library among engineers." },
+    { title: "How do you use React?", content: "You use React by creating components." },
+];
 
-    componentDidMount() {
-        this.onSearchSubmit("taylor swift");
-    }
+const options = [
+    {
+        label: "The Color Red",
+        value: "red",
+    },
+    {
+        label: "The Color Green",
+        value: "green",
+    },
+    {
+        label: "A Shade of Blue",
+        value: "blue",
+    },
+];
 
-    formatVideoObj(video) {
-        const id = video.id.videoId;
-        const { title, description, thumbnails } = video.snippet;
-        return {
-            id,
-            title,
-            description,
-            thumbnails,
-        };
-    }
-
-    async onSearchSubmit(term) {
-        const response = await youtubeApi.get("/search", { params: { q: term } });
-        const list = response.data.items.map((item) => this.formatVideoObj(item));
-        this.setState({ videos: list, selectedVideo: list[0] });
-    }
-
-    onVideoSelect(video) {
-        this.setState({ selectedVideo: video });
-    }
-
-    render() {
-        return (
-            <div className="ui container">
-                <SearchBar onSubmit={this.onSearchSubmit} />
-                <div className="ui grid">
-                    <div className="ui row">
-                        <div className="eleven wide column">
-                            <VideoDetail video={this.state.selectedVideo} />
-                        </div>
-                        <div className="five wide column">
-                            <VideoSelectContext.Provider value={this.onVideoSelect}>
-                                <VideoList videos={this.state.videos} />
-                            </VideoSelectContext.Provider>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+function App(props) {
+    const [selected, setSelected] = useState(options[0]);
+    return (
+        <div className="ui container">
+            <Header />
+            <Route path="/">
+                <Accordion items={items} />
+            </Route>
+            <Route path="/list">
+                <Search />
+            </Route>
+            <Route path="/dropdown">
+                <Dropdown
+                    selected={selected}
+                    onSelectedChanged={setSelected}
+                    options={options}
+                    label="Select a Color"
+                />
+            </Route>
+            <Route path="/translate">
+                <Translate />
+            </Route>
+        </div>
+    );
 }
 
 export default App;

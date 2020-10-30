@@ -4,42 +4,29 @@ import youtubeApi from "../api/youtube";
 import VideoList from "./VideoList";
 import VideoDetail from "./VideoDetail";
 import { VideoSelectContext } from "../hoc/context";
-
-const formatVideoObj = (video) => {
-    const id = video.id.videoId;
-    const { title, description, thumbnails } = video.snippet;
-    return { id, title, description, thumbnails };
-};
+import { useVideos } from "../hooks/index";
+import { formatVideoObj } from "../utils/utils";
 
 const App = () => {
-    const [videos, setVideos] = useState([]);
     const [selectedVideo, setSelectedVideo] = useState(null);
+    const [videos, search] = useVideos("taylor swift");
 
     useEffect(() => {
-        onSearchSubmit("Taylor Swift");
-    }, []);
-
-    const onVideoSelect = (video) => {
-        setSelectedVideo(video);
-    };
-
-    const onSearchSubmit = async (term) => {
-        const response = await youtubeApi.get("/search", { params: { q: term } });
-        const list = response.data.items.map((item) => formatVideoObj(item));
-        setVideos(list);
-        setSelectedVideo(list[0]);
-    };
+        if (videos.length > 0) {
+            setSelectedVideo(formatVideoObj(videos[0]));
+        }
+    }, [videos]);
 
     return (
         <div className="ui container">
-            <SearchBar onSubmit={onSearchSubmit} />
+            <SearchBar onSubmit={search} />
             <div className="ui grid">
                 <div className="ui row">
                     <div className="eleven wide column">
                         <VideoDetail video={selectedVideo} />
                     </div>
                     <div className="five wide column">
-                        <VideoSelectContext.Provider value={onVideoSelect}>
+                        <VideoSelectContext.Provider value={setSelectedVideo}>
                             <VideoList videos={videos} />
                         </VideoSelectContext.Provider>
                     </div>

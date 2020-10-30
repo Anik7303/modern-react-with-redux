@@ -2,8 +2,7 @@ import React from "react";
 import "./VideoItem.css";
 import { withVideoSelectProp } from "../hoc/context";
 
-function VideoItem({ video, onVideoSelect }) {
-    console.log({ video, onVideoSelect });
+const VideoItem = ({ video, onVideoSelect }) => {
     const { title, thumbnails } = video;
     return (
         <div className="item video--item" onClick={() => onVideoSelect(video)}>
@@ -13,6 +12,6 @@ function VideoItem({ video, onVideoSelect }) {
             </div>
         </div>
     );
-}
+};
 
 export default withVideoSelectProp(VideoItem);

@@ -1,45 +1,37 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-class SearchBar extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { term: "" };
-        this.searchRef = React.createRef(null);
-        this.onInputChange = this.onInputChange.bind(this);
-        this.onFormSubmit = this.onFormSubmit.bind(this);
-    }
+const SearchBar = (props) => {
+    const [term, setTerm] = useState("");
+    const searchRef = useRef(null);
 
-    componentDidMount() {
-        this.searchRef.current.focus();
-    }
+    useEffect(() => {
+        const timerId = setTimeout(() => {
+            searchRef.current.focus();
+        }, 500);
+        return () => clearTimeout(timerId);
+    }, [searchRef]);
 
-    onInputChange(event) {
-        this.setState({ term: event.target.value });
-    }
-
-    onFormSubmit(event) {
+    const onFormSubmit = (event) => {
         event.preventDefault();
-        this.props.onSubmit(this.state.term);
-        this.setState({ term: "" });
-    }
+        props.onSubmit(term);
+        setTerm("");
+    };
 
-    render() {
-        return (
-            <div className="search-bar ui segment">
-                <form className="ui form" onSubmit={this.onFormSubmit}>
-                    <div className="field">
-                        <input
-                            ref={this.searchRef}
-                            type="text"
-                            placeholder="Search.."
-                            value={this.state.term}
-                            onChange={this.onInputChange}
-                        />
-                    </div>
-                </form>
-            </div>
-        );
-    }
-}
+    return (
+        <div className="search-bar ui segment">
+            <form className="ui form" onSubmit={onFormSubmit}>
+                <div className="field">
+                    <input
+                        ref={searchRef}
+                        type="text"
+                        placeholder="Search.."
+                        value={term}
+                        onChange={(e) => setTerm(e.target.value)}
+                    />
+                </div>
+            </form>
+        </div>
+    );
+};
 
 export default SearchBar;

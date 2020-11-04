@@ -1,34 +1,48 @@
-import _ from "lodash";
-import jsonPlaceholderApi from "../api/jsonPlaceholder";
+import streamsApi from "../apis/streams";
+import {
+    SIGN_IN,
+    SIGN_OUT,
+    CREATE_STREAM,
+    FETCH_STREAM,
+    FETCH_STREAMS,
+    EDIT_STREAM,
+    DELETE_STREAM,
+} from "./types";
+import history from "../history";
 
-export const fetchPosts = () => async (dispatch) => {
-    const response = await jsonPlaceholderApi.get("/posts");
-
-    dispatch({ type: "FETCH_POSTS", payload: response.data });
+export const signIn = (userId) => {
+    return { type: SIGN_IN, payload: userId };
 };
 
-export const fetchUser = (id) => async (dispatch) => {
-    const response = await jsonPlaceholderApi.get(`/users/${id}`);
-
-    dispatch({ type: "FETCH_USER", payload: response.data });
+export const signOut = () => {
+    return { type: SIGN_OUT };
 };
 
-// export const fetchUser = (id) => (dispatch) => _fetchUser(id, dispatch);
+export const createStream = (formValues) => async (dispatch, getState) => {
+    const { userId } = getState().auth;
+    const response = await streamsApi.post("streams", { ...formValues, userId: userId });
+    dispatch({ type: CREATE_STREAM, payload: { ...response.data } });
+    history.push("/");
+};
 
-// const _fetchUser = _.memoize(async (id, dispatch) => {
-//     const response = await jsonPlaceholderApi.get(`/users/${id}`);
-//     dispatch({ type: "FETCH_USER", payload: response.data });
-// });
+export const fetchStreams = () => async (dispatch) => {
+    const response = await streamsApi.get("/streams");
+    dispatch({ type: FETCH_STREAMS, payload: response.data });
+};
 
-export const fetchPostsAndUsers = () => async (dispatch, getState) => {
-    await dispatch(fetchPosts());
+export const fetchStream = (id) => async (dispatch) => {
+    const response = await streamsApi.get(`/streams/${id}`);
+    dispatch({ type: FETCH_STREAM, payload: response.data });
+};
 
-    // const userIds = _.uniq(_.map(getState().posts, "userId"));
-    // userIds.forEach((id) => dispatch(fetchUser(id)));
+export const editStream = (id, formValues) => async (dispatch) => {
+    const response = await streamsApi.patch(`/streams/${id}`, formValues);
+    dispatch({ type: EDIT_STREAM, payload: response.data });
+    history.push("/");
+};
 
-    _.chain(getState().posts)
-        .map("userId")
-        .uniq()
-        .forEach((id) => dispatch(fetchUser(id)))
-        .value();
+export const deleteStream = (id) => async (dispatch) => {
+    await streamsApi.delete(`/streams/${id}`);
+    dispatch({ type: DELETE_STREAM, payload: id });
+    history.push("/");
 };

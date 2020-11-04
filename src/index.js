@@ -1,14 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Router } from "react-router-dom";
 import { Provider } from "react-redux";
 
-import App from "./components/App";
 import store from "./store";
+import App from "./components/App";
+import history from "./history";
 
-const element = (
+const rootElement = (
     <Provider store={store}>
-        <App />
+        <Router history={history}>
+            <App />
+        </Router>
     </Provider>
 );
 
-ReactDOM.render(element, document.getElementById("root"));
+ReactDOM.render(rootElement, document.getElementById("root"));

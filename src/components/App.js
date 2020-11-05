@@ -1,23 +1,17 @@
-import React, { Fragment } from "react";
-import { Route, Switch } from "react-router-dom";
+import React from "react";
 
-import { StreamCreate, StreamDelete, StreamEdit, StreamList, StreamShow } from "./streams";
-import Header from "./Header";
+import UserCreate from "./UserCreate";
+import LanguageSelector from "./LanguageSelector";
+import { LanguageStore } from "../context/LanguageContext";
 
 const App = () => {
     return (
-        <Fragment>
-            <Header />
-            <div className="ui container">
-                <Switch>
-                    <Route path="/" exact component={StreamList} />
-                    <Route path="/streams/new" exact component={StreamCreate} />
-                    <Route path="/streams/edit/:id" exact component={StreamEdit} />
-                    <Route path="/streams/delete/:id" exact component={StreamDelete} />
-                    <Route path="/streams/:id" exact component={StreamShow} />
-                </Switch>
-            </div>
-        </Fragment>
+        <div className="ui container">
+            <LanguageStore>
+                <LanguageSelector />
+                <UserCreate />
+            </LanguageStore>
+        </div>
     );
 };
 
